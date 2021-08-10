@@ -15,7 +15,7 @@ function createError(msg) {
 
 module.exports = function _createPandadocVerify(sharedKey, opts) {
   if (!opts) {
-    opts = { optional: false };
+    opts = { allowUnsignedGet: false };
   }
   if (!opts.pandadocParam) {
     opts.pandadocParam = '_pandadocSignaturePromise';
@@ -31,14 +31,27 @@ module.exports = function _createPandadocVerify(sharedKey, opts) {
       return;
     }
 
-    // in case we need to evaluate the signature in one area,
-    // but verify it in another
-    if (opts.optional && !req.query.signature) {
+    let untrustedHexSig = req.query.signature;
+    // no signature
+    if (!untrustedHexSig) {
+      req[opts.pandadocParam] = Promise.resolve(false);
       next();
       return;
     }
 
-    let untrustedHexSig = req.query.signature;
+    // empty content body
+    if (
+      !req.headers['content-length'] &&
+      'chunked' !== req.headers['transfer-encoding']
+    ) {
+      req[opts.pandadocParam] = Promise.resolve(
+        pandaHmac.verifySync(sharedKey, '', untrustedHexSig),
+      );
+      next();
+      return;
+    }
+
+    // signature + content body
     req[opts.pandadocParam] = pandaHmac
       .verify(sharedKey, req, untrustedHexSig)
       .catch(function () {
@@ -51,11 +64,17 @@ module.exports = function _createPandadocVerify(sharedKey, opts) {
 
   verifier.verify = async function (req, res, next) {
     let result = await req[opts.pandadocParam];
-    if (true !== result) {
-      next(createError(mismatchSignature));
+    if (true === result) {
+      next();
       return;
     }
-    next();
+
+    if (opts.allowUnsignedGet && 'GET' === req.method && !req.query.signature) {
+      next();
+      return;
+    }
+
+    next(createError(mismatchSignature));
   };
 
   return verifier;

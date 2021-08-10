@@ -56,7 +56,7 @@ let PDWebhook = require('pandadoc/webhook');
 ```
 
 ```js
-webhookHandler = PDWebhook.middleware(sharedKey);
+webhookHandler = PDWebhook.middleware(sharedKey, { allowUnsignedGet: false });
 // MUST come before other body parsers
 webhookHandler(req, res, next);
 webhookHandler.verify(req, res, next);
