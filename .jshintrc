@@ -1,0 +1,13 @@
+{
+  "esversion": 11,
+  "node": true,
+  "browser": true,
+  "bitwise": true,
+  "curly": true,
+  "eqeqeq": true,
+  "freeze": true,
+  "latedef": "nofunc",
+  "laxbreak": true,
+  "undef": true,
+  "unused": "vars"
+}
