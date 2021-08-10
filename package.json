@@ -1,0 +1,28 @@
+{
+  "name": "pandadoc",
+  "version": "1.0.0",
+  "description": "Node SDK for PandaDoc",
+  "main": "index.js",
+  "scripts": {
+    "test": "node webhook/hmac.js; node webhook/express.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/therootcompany/pandadoc.js.git"
+  },
+  "keywords": [
+    "PandaDoc",
+    "Webhook",
+    "API",
+    "SDK"
+  ],
+  "author": "AJ ONeal <coolaj86@gmail.com> (https://coolaj86.com/)",
+  "license": "MPL-2.0",
+  "bugs": {
+    "url": "https://github.com/therootcompany/pandadoc.js/issues"
+  },
+  "homepage": "https://github.com/therootcompany/pandadoc.js#readme",
+  "devDependencies": {
+    "@root/request": "^1.7.0"
+  }
+}
